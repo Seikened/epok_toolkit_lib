@@ -9,16 +9,16 @@ SERVER_URL = settings.SERVER_URL
 
 client = WhatsappClient(api_key=API_KEY, server_url=SERVER_URL, instance_name=INSTANCE)
 
-@shared_task(
-    bind=True,
-    autoretry_for=(ConnectionError, TimeoutError),
-    retry_backoff=True,       # 2, 4, 8, 16… s
-    retry_jitter=True,        # +- aleatorio
-    max_retries=3,
-    ignore_result=True,       # <-- ¡importante!
-)
+# @shared_task(
+#     bind=True,
+#     autoretry_for=(ConnectionError, TimeoutError),
+#     retry_backoff=True,       # 2, 4, 8, 16… s
+#     retry_jitter=True,        # +- aleatorio
+#     max_retries=3,
+#     ignore_result=True,       # <-- ¡importante!
+# )
 def send_whatsapp_message_async(number: str, message: str):
     return client.send_text(number, message)
 
 def send_text(number: str, message: str):
-    send_whatsapp_message_async.delay(number, message)
+    send_whatsapp_message_async(number, message)
