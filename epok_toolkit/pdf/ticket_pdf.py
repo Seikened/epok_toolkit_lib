@@ -12,6 +12,7 @@ from uuid import uuid4, UUID
 import os
 import qrcode
 from io import BytesIO
+import importlib.resources
 
 
 # pip install reportlab qrcode
@@ -30,7 +31,7 @@ def hex_to_rgb(hex_color):
 class Config:
     base_path = os.path.dirname(__file__)
     plantillas = base_path + "/plantillas/"
-    plantilla_path = os.path.join(plantillas, "Ticket_congrats.png")
+    plantilla_path = importlib.resources.files("epok_toolkit.pdf.plantillas").joinpath("Ticket_congrats.png")
     output_path = os.path.join(base_path, "ticket_final.pdf")
     fuente = "Helvetica"
     fuente_bold = "kollektif"
@@ -145,7 +146,9 @@ class TicketPDF:
         self.font_color = Config.font_color
         self.color = Config.bg_color
         self.fuente = Config.fuente
-        self.img = Image.open(Config.plantilla_path)
+        with Config.plantilla_path.open("rb") as f:
+            self.img = Image.open(f)
+            self.img.load()
         self.width, self.height = self.img.size
         self.buffer = BytesIO()
         self.c = canvas.Canvas(self.buffer, pagesize=(self.width, self.height))
@@ -153,7 +156,8 @@ class TicketPDF:
 
     def generate_ticket(self):
         def y(px): return self.height - px
-        self.c.drawImage(ImageReader(Config.plantilla_path), 0, 0, width=self.width, height=self.height, mask='auto')
+        with Config.plantilla_path.open("rb") as f:
+            self.c.drawImage(ImageReader(f), 0, 0, width=self.width, height=self.height, mask='auto')
 
         # NOMBRE EVENTO
         nombre_evento = ContenedorTexto(x=260, y=y(210), w=1400, h=90, texto=self.nombre_evento, font_size=78, bold=True)

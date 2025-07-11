@@ -1,4 +1,7 @@
 include README.md
 include LICENSE
-recursive-include epok_toolkit/email/templates *
 
+
+# Incluye fuentes y plantillas de PDF
+recursive-include epok_toolkit/pdf/fuentes *.ttf
+recursive-include epok_toolkit/pdf/plantillas *.png
