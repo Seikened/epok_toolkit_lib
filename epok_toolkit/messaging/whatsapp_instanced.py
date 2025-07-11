@@ -23,4 +23,6 @@ def send_whatsapp_message_async(number: str, message: str):
     return client.send_text(number, message)
 
 def send_text(number: str, message: str):
-    send_whatsapp_message_async(number, message)
+    from colorstreak import log
+    log.debug(f"Programando tarea para {number}")
+    send_whatsapp_message_async.delay(number, message)
