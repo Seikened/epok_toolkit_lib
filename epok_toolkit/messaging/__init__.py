@@ -1,1 +1,1 @@
-from .whatsapp_instanced import send_text
+from .whatsapp_instanced import send_text, send_media

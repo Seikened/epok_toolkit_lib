@@ -1,3 +1,4 @@
+from colorstreak import log
 from .whatsapp import WhatsappClient
 from django.conf import settings
 from celery import shared_task
@@ -9,16 +10,27 @@ SERVER_URL = settings.SERVER_URL
 
 @shared_task
 def send_whatsapp_message_async(number: str, message: str):
-    try:
-        from colorstreak import log
-        log.debug(f"Enviando mensaje a {number}: '{message}'")
+    log.debug(f"Enviando mensaje a {number}: '{message}'")
+    client = WhatsappClient(api_key=API_KEY, server_url=SERVER_URL, instance_name=INSTANCE)
+    return client.send_text(number, message)
 
-        client = WhatsappClient(api_key=API_KEY, server_url=SERVER_URL, instance_name=INSTANCE)
-        return client.send_text(number, message)
-    except Exception as e:
-        log.error(f"Error al enviar mensaje a {number}: {e}")
+
+@shared_task
+def send_whatsapp_media_async(number: str, media_b64: str, filename: str, caption: str, mediatype: str = "document", mimetype: str = "application/pdf"):
+    log.debug(f"Enviando media a {number}: '{filename}'")
+    client = WhatsappClient(api_key=API_KEY, server_url=SERVER_URL, instance_name=INSTANCE)
+    return client.send_media(number, media_b64, filename, caption, mediatype, mimetype)
+
+
+
 
 def send_text(number: str, message: str):
     from colorstreak import log
     log.debug(f"Programando tarea para {number}")
     send_whatsapp_message_async.delay(number, message)
+    
+
+def send_media(number: str, media_b64: str, filename: str, caption: str, mediatype: str = "document", mimetype: str = "application/pdf"):
+    from colorstreak import log
+    log.debug(f"Programando tarea para enviar media a {number}")
+    send_whatsapp_media_async.delay(number, media_b64, filename, caption, mediatype, mimetype)
