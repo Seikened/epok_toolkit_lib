@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define la versión automáticamente (puedes ajustarla o obtenerla de otra fuente)
-VERSION="v0.2.0"
+VERSION="v1.0.0"
 
 echo "Creando una nueva etiqueta: $VERSION"
 git tag "$VERSION"
