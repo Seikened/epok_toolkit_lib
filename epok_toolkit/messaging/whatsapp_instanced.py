@@ -4,14 +4,7 @@ from celery import shared_task
 
 
 
-@shared_task(
-    bind=True,
-    autoretry_for=(ConnectionError, TimeoutError),
-    retry_backoff=True,       # 2, 4, 8, 16… s
-    retry_jitter=True,        # +- aleatorio
-    max_retries=3,
-    ignore_result=True,       # <-- ¡importante!
-)
+@shared_task
 def send_whatsapp_message_async(number: str, message: str):
     from colorstreak import log
     log.debug(f"Enviando mensaje a {number}: '{message}'")
