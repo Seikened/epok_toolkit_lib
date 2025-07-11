@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "epok-toolkit"
-version = "1.0.0"
+version = "1.1.0"
 description = "A toolkit for building Django applications with Celery support"
 authors = [
     { name="Fernando Leon Franco", email="fernanlee2131@gmail.com" }

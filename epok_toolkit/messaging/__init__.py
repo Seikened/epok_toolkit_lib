@@ -1,1 +1,1 @@
-from .whatsapp_instanced import send_whatsapp_message
+from .whatsapp_instanced import send_text

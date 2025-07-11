@@ -17,6 +17,8 @@ client = WhatsappClient(api_key=API_KEY, server_url=SERVER_URL, instance_name=IN
     max_retries=3,
     ignore_result=True,       # <-- ¡importante!
 )
-def send_whatsapp_message(number: str, message: str):
+def send_whatsapp_message_async(number: str, message: str):
     return client.send_text(number, message)
 
+def send_text(number: str, message: str):
+    send_whatsapp_message_async.delay(number, message)
