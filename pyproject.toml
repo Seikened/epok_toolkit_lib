@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "epok-toolkit"
-version = "1.7.0"
+version = "1.7.1"
 description = "Una herramienta para la gestión de tareas y procesos en Django con Celery."
 authors = [
     { name="Fernando Leon Franco", email="fernanlee2131@gmail.com" }
@@ -14,7 +14,7 @@ readme = "README.md"
 requires-python = ">=3.12.9"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Framework :: Django Rest Framework",
+    "Framework :: Django",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"
 ]
