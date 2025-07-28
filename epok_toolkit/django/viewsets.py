@@ -1,8 +1,13 @@
 # core/viewsets.py
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 
 class DefaultPagination(PageNumberPagination):
+    """
+    Clase de paginación por defecto para los ViewSets.
+    Puedes personalizarla según tus necesidades.
+    """
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
@@ -10,32 +15,42 @@ class DefaultPagination(PageNumberPagination):
 
 
 class BaseOptimizedViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet base que alterna entre .full() y .simple() automáticamente
-    y permite serializers diferentes para list y detail.
-    """
-    pagination_class = DefaultPagination
+    queryset = None
+    write_serializer_class = None
+    update_serializer_class = None
     simple_serializer_class = None
     full_serializer_class = None
+    serializer_class = full_serializer_class
+    extensions_auto_optimize = True
 
-    # def get_queryset(self):        
-    #     qs = super().get_queryset()
+    permission_classes = [AllowAny]
+
+    filterset_fields = []
+    search_fields = []
+    ordering_fields = []
+    ordering = []
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        model_cls = qs.model
+        manager = model_cls._default_manager
+
+        if hasattr(manager, 'simple') and self.action == 'list':
+            return manager.simple()
+        elif hasattr(manager, 'full'):
+            return manager.full()
+    
+
+    def get_serializer_class(self):
         
-    #     if not (hasattr(qs, 'full') and hasattr(qs, 'simple')):
-    #         raise NotImplementedError(
-    #         f"❌ El modelo {qs.model.__name__} no está usando un OptimizedManager con full() y simple()."
-    #     )
-
-    #     if self.action == 'list':
-    #         return qs.simple()
-    #     elif self.action in ['retrieve', 'update', 'partial_update']:
-    #         return qs.full()
-    #     return qs
-
-    # def get_serializer_class(self):
-    #     # Cambia el serializer según la acción
-    #     if self.action == 'list' and self.simple_serializer_class:
-    #         return self.simple_serializer_class
-    #     if self.action in ['retrieve', 'update', 'partial_update'] and self.full_serializer_class:
-    #         return self.full_serializer_class
-    #     return super().get_serializer_class()
+        match self.action:
+            case 'create':
+                return self.write_serializer_class
+            case 'update' | 'partial_update':
+                return self.update_serializer_class
+            case 'list':
+                return self.simple_serializer_class
+            case 'retrieve':
+                return self.full_serializer_class
+            case _:
+                return super().get_serializer_class()
