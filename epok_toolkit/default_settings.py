@@ -13,3 +13,21 @@ EMAIL_HOST_PASSWORD = "your-email-password"
 API_KEY = "your-whatsapp-api-key"
 INSTANCE = "instance-id"
 SERVER_URL = "https://your-server-url.com/"
+
+
+
+#  ---------- TEMPLATE DE CORREO ELECTRÓNICO ---------- #
+TEMPLATES_SETTINGS = {
+    "company": {
+        "name": "Congrats",
+        "email": "info@compania.com",
+        "eslogan": "Eslogan sin definir",
+        "footer": "¡Nos vemos pronto!<br><em> El equipo de Congrats 🥳</em>"
+    },
+    "colors": {
+        "background": "#f9fafb",
+        "primary": "#4f46e5",
+        "text": "#374151",
+        "white": "#ffffff"
+    }
+}
