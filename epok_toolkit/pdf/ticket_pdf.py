@@ -4,18 +4,14 @@ from datetime import date, datetime
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Optional
 from PIL import Image
-import locale
 from uuid import uuid4, UUID
 import os
 import qrcode
 from io import BytesIO
 import importlib.resources
 
-
-# pip install reportlab qrcode
 
 
 fuente_path = os.path.join(os.path.dirname(__file__), "fuentes", "Kollektif-Bold.ttf")
