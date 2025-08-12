@@ -1,7 +1,7 @@
 # core/viewsets.py
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 class DefaultPagination(PageNumberPagination):
     """
@@ -23,7 +23,9 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
     serializer_class = full_serializer_class
     extensions_auto_optimize = True
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    pagination_class = DefaultPagination
 
     filterset_fields = []
     search_fields = []
@@ -54,3 +56,10 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
                 return self.full_serializer_class
             case _:
                 return super().get_serializer_class()
+    
+    
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user, updated_by=self.request.user)
+        
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
