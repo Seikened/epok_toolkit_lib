@@ -38,10 +38,14 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
         manager = model_cls._default_manager
 
         if hasattr(manager, 'simple') and self.action == 'list':
-            return manager.simple()
+            qs = manager.simple()
         elif hasattr(manager, 'full'):
-            return manager.full()
-    
+            qs = manager.full()
+
+        if hasattr(manager, 'created_by'):
+            return qs.filter(created_by=self.request.user)
+        
+        return qs
 
     def get_serializer_class(self):
         
@@ -59,7 +63,9 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
     
     
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user, updated_by=self.request.user)
-        
+        if hasattr(serializer, 'created_by') and hasattr(serializer, 'updated_by'):
+            serializer.save(created_by=self.request.user, updated_by=self.request.user)
+
     def perform_update(self, serializer):
-        serializer.save(updated_by=self.request.user)
+        if hasattr(serializer, 'updated_by'):
+            serializer.save(updated_by=self.request.user)
