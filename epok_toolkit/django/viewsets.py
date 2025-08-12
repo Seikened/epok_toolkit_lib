@@ -39,17 +39,20 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
         manager = model_cls._default_manager
 
         if hasattr(manager, 'simple') and self.action == 'list':
-            log.debug("| LIBRERIA |Usando sin simple sin filtros")
+            log.debug("| LIBRERIA | Usando QS simple")
             qs = manager.simple()
         elif hasattr(manager, 'full'):
-            log.debug("Usando sin full sin filtros")
+            log.debug("| LIBRERIA | Usando QS full")
             qs = manager.full()
 
-        if hasattr(manager, 'created_by'):
-            log.debug("| LIBRERIA |Filtrando por created_by")
+        try:
+            log.debug("| LIBRERIA | Filtrando por created_by")
             return qs.filter(created_by=self.request.user)
-        
-        return qs
+        except Exception as e:
+            log.error(f"| LIBRERIA | Error al filtrar por created_by: {e}")
+            log.info("| LIBRERIA | Filtrado sin created_by")
+            return qs
+
 
     def get_serializer_class(self):
         
@@ -67,11 +70,19 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
     
     
     def perform_create(self, serializer):
-        if hasattr(serializer, 'created_by') and hasattr(serializer, 'updated_by'):
+        try:
             log.debug("| LIBRERIA |Guardando con created_by y updated_by")
             serializer.save(created_by=self.request.user, updated_by=self.request.user)
+        except Exception as e:
+            log.error(f"| LIBRERIA | Error al guardar: {e}")
+            log.info("| LIBRERIA | Guardando sin created_by y updated_by")
+            serializer.save()
 
     def perform_update(self, serializer):
-        if hasattr(serializer, 'updated_by'):
-            log.debug("| LIBRERIA |Guardando con updated_by")
+        try:
+            log.debug("| LIBRERIA | Guardando con updated_by")
             serializer.save(updated_by=self.request.user)
+        except Exception as e:
+            log.error(f"| LIBRERIA | Error al actualizar: {e}")
+            log.info("| LIBRERIA | Guardando sin updated_by")
+            serializer.save()
