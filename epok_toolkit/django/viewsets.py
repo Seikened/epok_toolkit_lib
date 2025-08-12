@@ -2,6 +2,7 @@
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from colorstreak import log
 
 class DefaultPagination(PageNumberPagination):
     """
@@ -38,11 +39,14 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
         manager = model_cls._default_manager
 
         if hasattr(manager, 'simple') and self.action == 'list':
+            log.debug("| LIBRERIA |Usando sin simple sin filtros")
             qs = manager.simple()
         elif hasattr(manager, 'full'):
+            log.debug("Usando sin full sin filtros")
             qs = manager.full()
 
         if hasattr(manager, 'created_by'):
+            log.debug("| LIBRERIA |Filtrando por created_by")
             return qs.filter(created_by=self.request.user)
         
         return qs
@@ -64,8 +68,10 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         if hasattr(serializer, 'created_by') and hasattr(serializer, 'updated_by'):
+            log.debug("| LIBRERIA |Guardando con created_by y updated_by")
             serializer.save(created_by=self.request.user, updated_by=self.request.user)
 
     def perform_update(self, serializer):
         if hasattr(serializer, 'updated_by'):
+            log.debug("| LIBRERIA |Guardando con updated_by")
             serializer.save(updated_by=self.request.user)
