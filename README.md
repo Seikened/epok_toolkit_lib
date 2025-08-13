@@ -1,6 +1,6 @@
 
 
-# EPOK Toolkit 'v1.11.2'
+# EPOK Toolkit 'v1.12.4'
 
 EPOK Toolkit es una librería de utilidades para proyectos Django y Python, diseñada para facilitar tareas comunes como envío de emails, mensajería WhatsApp, generación de PDFs y manejo avanzado de caché en APIs.
 

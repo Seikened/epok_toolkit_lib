@@ -16,12 +16,16 @@ class DefaultPagination(PageNumberPagination):
 
 
 class BaseOptimizedViewSet(viewsets.ModelViewSet):
+    """
+    Clase base para ViewSets optimizados.
+    
+    """
     queryset = None
     write_serializer_class = None
     update_serializer_class = None
     simple_serializer_class = None
     full_serializer_class = None
-    serializer_class = full_serializer_class
+    serializer_class = None
     extensions_auto_optimize = True
 
     permission_classes = [IsAuthenticated]
@@ -57,18 +61,21 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         
         match self.action:
-            case 'create':
+            case 'create' if self.write_serializer_class is not None:
                 return self.write_serializer_class
-            case 'update' | 'partial_update':
+            case 'update' | 'partial_update' if self.update_serializer_class is not None and self.write_serializer_class is not None:
                 return self.update_serializer_class
-            case 'list':
+            case 'list' if self.simple_serializer_class is not None:
                 return self.simple_serializer_class
-            case 'retrieve':
+            case 'retrieve' if self.full_serializer_class is not None:
                 return self.full_serializer_class
+            case _ if self.serializer_class is not None:
+                log.warning(f"| LIBRERIA | No se encontró serializer específico para la acción '{self.action}', usando el por defecto.")
+                return self.serializer_class
             case _:
-                return super().get_serializer_class()
-    
-    
+                log.error("| LIBRERIA | No se encontró serializer por defecto")
+                raise ValueError("No se encontró serializer por defecto")
+
     def perform_create(self, serializer):
         try:
             log.debug("| LIBRERIA |Guardando con created_by y updated_by")
