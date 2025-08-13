@@ -93,7 +93,7 @@ def cache_get(ttl=_DEFAULT_TTL, key_func=_DEFAULT_KEY):
 
         @wraps(view_fn)
         def wrapped(*args, **kwargs):
-            log.debug(
+            log.library(
                 f"[📦 cache_get] {view_fn.__qualname__} | ttl={ttl}s"
             )
             # Llamamos directamente a la versión ya decorada,
@@ -122,7 +122,7 @@ def cache_full(ttl=_DEFAULT_TTL, key_prefix=""):
 
         @wraps(view_fn)
         def wrapped(self, request, *args, **kwargs):
-            log.debug(f"[🚀 cache_full] {view_fn.__qualname__} | ttl={ttl}s | prefix={key_prefix}")
+            log.library(f"[🚀 cache_full] {view_fn.__qualname__} | ttl={ttl}s | prefix={key_prefix}")
             return decorated_fn(self, request, *args, **kwargs)
 
         return wrapped

@@ -38,24 +38,27 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
     ordering = []
 
     def get_queryset(self):
+        # aqui heredamos de la libreria estandar
         qs = super().get_queryset()
         model_cls = qs.model
         manager = model_cls._default_manager
 
         if hasattr(manager, 'simple') and self.action == 'list':
-            log.debug("| LIBRERIA | Usando QS simple")
+            log.library("| LIBRERIA | Usando QS simple")
             qs = manager.simple()
         elif hasattr(manager, 'full'):
-            log.debug("| LIBRERIA | Usando QS full")
+            log.library("| LIBRERIA | Usando QS full")
             qs = manager.full()
 
         try:
-            log.debug("| LIBRERIA | Filtrando por created_by")
-            return qs.filter(created_by=self.request.user)
+            log.library("| LIBRERIA | Filtrando por created_by")
+            qs_created_by= qs.filter(created_by=self.request.user)
+            return qs_created_by
         except Exception as e:
             log.error(f"| LIBRERIA | Error al filtrar por created_by: {e}")
             log.info("| LIBRERIA | Filtrado sin created_by")
             return qs
+
 
 
     def get_serializer_class(self):
@@ -78,7 +81,7 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         try:
-            log.debug("| LIBRERIA |Guardando con created_by y updated_by")
+            log.library("| LIBRERIA |Guardando con created_by y updated_by")
             serializer.save(created_by=self.request.user, updated_by=self.request.user)
         except Exception as e:
             log.error(f"| LIBRERIA | Error al guardar: {e}")
@@ -87,7 +90,7 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         try:
-            log.debug("| LIBRERIA | Guardando con updated_by")
+            log.library("| LIBRERIA | Guardando con updated_by")
             serializer.save(updated_by=self.request.user)
         except Exception as e:
             log.error(f"| LIBRERIA | Error al actualizar: {e}")

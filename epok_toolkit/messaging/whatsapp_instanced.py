@@ -10,14 +10,14 @@ SERVER_URL = settings.SERVER_URL
 
 @shared_task
 def send_whatsapp_message_async(number: str, message: str):
-    log.debug(f"Enviando mensaje a {number}: '{message}'")
+    log.library(f"Enviando mensaje a {number}: '{message}'")
     client = WhatsappClient(api_key=API_KEY, server_url=SERVER_URL, instance_name=INSTANCE)
     return client.send_text(number, message)
 
 
 @shared_task
 def send_whatsapp_media_async(number: str, media_b64: str, filename: str, caption: str, mediatype: str = "document", mimetype: str = "application/pdf"):
-    log.debug(f"Enviando media a {number}: '{filename}'")
+    log.library(f"Enviando media a {number}: '{filename}'")
     client = WhatsappClient(api_key=API_KEY, server_url=SERVER_URL, instance_name=INSTANCE)
     return client.send_media(number, media_b64, filename, caption, mediatype, mimetype)
 
@@ -26,11 +26,11 @@ def send_whatsapp_media_async(number: str, media_b64: str, filename: str, captio
 
 def send_text(number: str, message: str):
     from colorstreak import log
-    log.debug(f"Programando tarea para {number}")
+    log.library(f"Programando tarea para {number}")
     send_whatsapp_message_async.delay(number, message)
     
 
 def send_media(number: str, media_b64: str, filename: str, caption: str, mediatype: str = "document", mimetype: str = "application/pdf"):
     from colorstreak import log
-    log.debug(f"Programando tarea para enviar media a {number}")
+    log.library(f"Programando tarea para enviar media a {number}")
     send_whatsapp_media_async.delay(number, media_b64, filename, caption, mediatype, mimetype)
