@@ -70,7 +70,7 @@ class BaseOptimizedViewSet(viewsets.ModelViewSet):
             case 'retrieve' if self.full_serializer_class is not None:
                 return self.full_serializer_class
             case _ if self.serializer_class is not None:
-                log.warning(f"| LIBRERIA | No se encontró serializer específico para la acción '{self.action}', usando el por defecto.")
+                # log.warning(f"| LIBRERIA | No se encontró serializer específico para la acción '{self.action}', usando el por defecto.")
                 return self.serializer_class
             case _:
                 log.error("| LIBRERIA | No se encontró serializer por defecto")
